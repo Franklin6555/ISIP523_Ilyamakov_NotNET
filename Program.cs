@@ -48,8 +48,15 @@ while (inMenu)
             }
             break;
         case 3:
+            bool tat = TryAddTeacher(ref teachers, ref teacherGId);
+            if (tat) Console.WriteLine("Успешно");
+            else Console.WriteLine("Попробуйте снова");
             break;
         case 4:
+            for (int i = 0; i < students.Count; i++)
+            {
+                students[i].PrintInfo();
+            }
             break;
         case 5:
             break;
@@ -107,6 +114,49 @@ static bool TryAddSudent(ref List<Student> list, ref int gId)
         return false;
     }
     list.Add(new Student(gId++, fio, date, s, ys, hg));
+    return true;
+}
+
+static bool TryAddTeacher(ref List<Teacher> list, ref int gId)
+{
+    Console.WriteLine("Введите ФИО:");
+    string fio = Console.ReadLine();
+    if (fio == null)
+    {
+        Console.WriteLine("ФИО не может быть пустым");
+        return false;
+    }
+    Console.WriteLine("Введите Дату рождения (формат ГГГГ,ММ,ДД)");
+    DateOnly date;
+    bool isDate = DateOnly.TryParse(Console.ReadLine(), out date);
+    if (isDate == false)
+    {
+        Console.WriteLine("Не верный формат даты либо попытка внести пустое значение");
+        return false;
+    }
+    Console.WriteLine("Введите пол:");
+    string s = Console.ReadLine();
+    if (s == null)
+    {
+        Console.WriteLine("Пол не может быть пустым");
+        return false;
+    }
+    Console.WriteLine("Введите опыт работы (кол-во полных лет)");
+    string x = Console.ReadLine();
+    if (x == null)
+    {
+        Console.WriteLine("Опыт работы не может быть пустым");
+        return false;
+    }
+    int xp = Convert.ToInt32(x);
+    Console.WriteLine("Введите предметную область: ");
+    string sa = Console.ReadLine();
+    if (sa == null)
+    {
+        Console.WriteLine("Предметная область не может быть пустой ");
+        return false;
+    }
+    list.Add(new Teacher(gId++, fio, date, s, xp, sa));
     return true;
 }
 
@@ -184,14 +234,12 @@ class Teacher : Person
     public int id { get; private set; }
     private int experience;
     private string subjectArea;
-    public List<Course> courses;
-    public Teacher(int id, string fio, DateOnly dateOfBirth, string sex, int experience, string subjectArea, List<Course> courses)
+    public Teacher(int id, string fio, DateOnly dateOfBirth, string sex, int experience, string subjectArea)
         : base(fio, dateOfBirth, sex)
     {
         this.id = id;
         this.experience = experience;
         this.subjectArea = subjectArea;
-        this.courses = courses;
     }
 
     public override void PrintInfo()
