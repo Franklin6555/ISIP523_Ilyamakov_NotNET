@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using static System.Reflection.Metadata.BlobBuilder;
 
 List <Student> students = new List<Student>();
@@ -16,25 +17,97 @@ while (inMenu)
     Console.WriteLine("-------------------------------------------");
     Console.WriteLine("Выберите пункт меню:");
     Console.WriteLine("1. Добавить студента");
-    Console.WriteLine("2. Удалить студента по ID");
-    Console.WriteLine("3. Вывести информацию о всех судентах");
+    Console.WriteLine("2. Вывести информацию о всех судентах");
     Console.WriteLine("-------------------------------------------");
-    Console.WriteLine("4. Добавить преподавателя");
-    Console.WriteLine("5. Удалить преподавателя по ID");
-    Console.WriteLine("6. Вывести информацию о всех преподавателях");
+    Console.WriteLine("3. Добавить преподавателя");
+    Console.WriteLine("4. Вывести информацию о всех преподавателях");
     Console.WriteLine("-------------------------------------------");
-    Console.WriteLine("7. Добавить курс");
-    Console.WriteLine("8. Удалить курс по ID");
-    Console.WriteLine("9. Вывести информацию о всех курсах");
+    Console.WriteLine("5. Добавить курс");
+    Console.WriteLine("7. Вывести информацию о всех курсах");
     Console.WriteLine("-------------------------------------------");
-    Console.WriteLine("10. Записать студента на курс");
-    Console.WriteLine("11. Удалить студента с курса");
-    Console.WriteLine("12. Поменять преподователя на курсе");
+    Console.WriteLine("8. Записать студента на курс");
+    Console.WriteLine("9. Удалить студента с курса");
+    Console.WriteLine("10. Поменять преподователя на курсе");
     Console.WriteLine("-------------------------------------------");
     Console.WriteLine("0. Выход");
     Console.WriteLine("-------------------------------------------");
     int choice = Convert.ToInt32(Console.ReadLine());
     Console.WriteLine("-------------------------------------------");
+
+    switch(choice)
+    {
+        case 1:
+            bool tas = TryAddSudent(ref students, ref studentGId);
+            if (tas) Console.WriteLine("Успешно");
+            else Console.WriteLine("Попробуйте снова");
+            break;
+        case 2:
+            for (int i = 0; i < students.Count; i++)
+            {
+                students[i].PrintInfo();
+            }
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+        case 7:
+            break;
+        case 8:
+            break;
+        case 9:
+            break;
+        case 10:
+            break;
+    }
+
+}
+
+static bool TryAddSudent(ref List<Student> list, ref int gId)
+{
+    Console.WriteLine("Введите ФИО:");
+    string fio = Console.ReadLine();
+    if (fio == null)
+    {
+        Console.WriteLine("ФИО не может быть пустым");
+        return false;
+    }
+    Console.WriteLine("Введите Дату рождения (формат ГГГГ,ММ,ДД)");
+    DateOnly date;
+    bool isDate = DateOnly.TryParse(Console.ReadLine(), out date);
+    if (isDate == false)
+    {
+        Console.WriteLine("Не верный формат даты либо попытка внести пустое значение");
+        return false;
+    }
+    Console.WriteLine("Введите пол:");
+    string s = Console.ReadLine();
+    if (s == null)
+    {
+        Console.WriteLine("Пол не может быть пустым");
+        return false;
+    }
+    Console.WriteLine("Введите курс обучения");
+    string strys = Console.ReadLine();
+    if (strys == null)
+    {
+        Console.WriteLine("Курс обучения не может быть пустым");
+        return false;
+    }
+    int ys = Convert.ToInt32(strys);
+    Console.WriteLine("Введите группу здоровья: ");
+    string hg = Console.ReadLine();
+    if (hg == null)
+    {
+        Console.WriteLine("Группа здоровья не может быть пустой ");
+        return false;
+    }
+    list.Add(new Student(gId++, fio, date, s, ys, hg));
+    return true;
 }
 
 // Классы
@@ -89,14 +162,12 @@ class Student : Person
     public int id { get; private set; }
     private int yearOfStudy;
     private string healthGroup;
-    public List<Course> courses;
-    public Student(int id, string fio, DateOnly dateOfBirth, string sex, int yearOfStudy, string healthGroup, List<Course> courses)
+    public Student(int id, string fio, DateOnly dateOfBirth, string sex, int yearOfStudy, string healthGroup)
         : base(fio, dateOfBirth, sex)
     {
         this.id = id;
         this.yearOfStudy = yearOfStudy;
         this.healthGroup = healthGroup;
-        this.courses = courses;
     }
 
     public override void PrintInfo()
