@@ -53,14 +53,21 @@ while (inMenu)
             else Console.WriteLine("Попробуйте снова");
             break;
         case 4:
-            for (int i = 0; i < students.Count; i++)
+            for (int i = 0; i < teachers.Count; i++)
             {
-                students[i].PrintInfo();
+                teachers[i].PrintInfo();
             }
             break;
         case 5:
+            bool tac = TryAddCourse(ref courses, ref courseGId, teachers, students);
+            if (tac) Console.WriteLine("Успешно");
+            else Console.WriteLine("Попробуйте снова");
             break;
         case 6:
+            for (int i = 0; i < courses.Count; i++)
+            {
+                courses[i].PrintInfo();
+            }
             break;
         case 7:
             break;
@@ -74,7 +81,7 @@ while (inMenu)
 
 }
 
-static bool TryAddSudent(ref List<Student> list, ref int gId)
+static bool TryAddSudent(ref List<Student> students, ref int gId)
 {
     Console.WriteLine("Введите ФИО:");
     string fio = Console.ReadLine();
@@ -113,11 +120,11 @@ static bool TryAddSudent(ref List<Student> list, ref int gId)
         Console.WriteLine("Группа здоровья не может быть пустой ");
         return false;
     }
-    list.Add(new Student(gId++, fio, date, s, ys, hg));
+    students.Add(new Student(gId++, fio, date, s, ys, hg));
     return true;
 }
 
-static bool TryAddTeacher(ref List<Teacher> list, ref int gId)
+static bool TryAddTeacher(ref List<Teacher> teachers, ref int gId)
 {
     Console.WriteLine("Введите ФИО:");
     string fio = Console.ReadLine();
@@ -156,23 +163,84 @@ static bool TryAddTeacher(ref List<Teacher> list, ref int gId)
         Console.WriteLine("Предметная область не может быть пустой ");
         return false;
     }
-    list.Add(new Teacher(gId++, fio, date, s, xp, sa));
+    teachers.Add(new Teacher(gId++, fio, date, s, xp, sa));
     return true;
 }
+
+static bool TryAddCourse(ref List<Course> course, ref int gId, List<Teacher> teachers, List<Student> students)
+{
+    Console.WriteLine("Введите название курса:");
+    string n = Console.ReadLine();
+    if (n == null)
+    {
+        Console.WriteLine("Название не может быть пустым");
+        return false;
+    }
+
+    Console.WriteLine("Введите описание курса:");
+    string d = Console.ReadLine();
+    if (d == null)
+    {
+        Console.WriteLine("Описание не может быть пустым");
+        return false;
+    }
+
+    Console.WriteLine("Введите ID преподавателя курса:");
+    string tIdStr = Console.ReadLine();
+    if (tIdStr == null)
+    {
+        Console.WriteLine("ID преподавателя не может быть пустым");
+        return false;
+    }
+    int tId = Convert.ToInt32(tIdStr);
+    try
+    {
+        teachers.Find(t => t.id == tId);
+    }
+    catch
+    {
+        Console.WriteLine("Нет преподавателя с таким ID");
+        return false;
+    }
+
+    Console.WriteLine("Введите ID студентов курса через Enter. Когда закончите введите 0:");
+    List<int> studentsOnCourse = new List<int>;
+    bool enterStudents = true;
+    while (enterStudents)
+    {
+        int sId = Convert.ToInt32(Console.ReadLine());
+        try
+        {
+            students.Find(s => s.id == sId);
+            studentsOnCourse.Add(sId);
+        }
+        catch
+        {
+            Console.WriteLine("Нет студента с таким ID");
+        }
+        if (sId == 0)
+        {
+            course.Add(new Course(gId, n, d, tId, studentsOnCourse));
+            enterStudents = false;
+        }
+    }
+    return true;
+}
+
 
 // Классы
 class Course
 {
     public int id { get; private set; }
-    private string title;
+    private string name;
     private string description;
     private int teacherId;
     public List<int> studentId;
 
-    public Course(int id, string title, string description, int teacherId, List<int> studentId)
+    public Course(int id, string name, string description, int teacherId, List<int> studentId)
     {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.description = description;
         this.teacherId = teacherId;
         this.studentId = studentId;
@@ -180,7 +248,7 @@ class Course
 
     public void PrintInfo()
     {
-        Console.WriteLine($"Название: {title}\nОписание: {description}\nID преподаввателя: {teacherId}");
+        Console.WriteLine($"Название: {name}\nОписание: {description}\nID преподаввателя: {teacherId}");
         Console.WriteLine("Id студентов, записанных на курс:");
         foreach (var sId in studentId)
         {
