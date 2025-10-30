@@ -27,8 +27,7 @@ while (inMenu)
     Console.WriteLine("6. Вывести информацию о всех курсах");
     Console.WriteLine("-------------------------------------------");
     Console.WriteLine("7. Записать студента на курс");
-    Console.WriteLine("8. Удалить студента с курса");
-    Console.WriteLine("9. Поменять преподователя на курсе");
+    Console.WriteLine("8. Узнать, на какие курсы записан студент");
     Console.WriteLine("-------------------------------------------");
     Console.WriteLine("0. Выход");
     Console.WriteLine("-------------------------------------------");
@@ -71,10 +70,26 @@ while (inMenu)
             }
             break;
         case 7:
+            Console.WriteLine("Введите ID курса");
+            int cId = Convert.ToInt32(Console.ReadLine());
+            Course course;
+            try
+            {
+                course = courses.Find(c => c.id == cId);
+            }
+            catch
+            {
+                Console.WriteLine("Нет курса с таким ID");
+                break;
+            }
+            bool trs = RegisterStudent(ref course, students);
+            if (trs) Console.WriteLine("Успешно");
+            else Console.WriteLine("Попробуйте снова");
             break;
         case 8:
-            break;
-        case 9:
+            Console.WriteLine("Введите ID студента:");
+            
+            
             break;
     }
 
@@ -226,15 +241,56 @@ static bool AddCourse(ref List<Course> course, ref int gId, List<Teacher> teache
     return true;
 }
 
+static bool RegisterStudent(ref Course course, List<Student> students)
+{
+    Console.WriteLine("Введите ID студента");
+    int sId = Convert.ToInt32(Console.ReadLine());
+    try
+    {
+        students.Find(s => s.id == sId);
+        course.Register(sId);
+    }
+    catch
+    {
+        Console.WriteLine("Нет студента с таким ID");
+        return false;
+    }
+    course.Register(sId);
+    return true;
+}
+
+static bool ChekSutentCourses(Course course, List<Student> students, List<Course> courses)
+{
+    Console.WriteLine("Введите ID студента");
+    int sId = Convert.ToInt32(Console.ReadLine());
+    try
+    {
+        students.Find(s => s.id == sId);
+    }
+    catch
+    {
+        Console.WriteLine("Нет студента с таким ID");
+        return false;
+    }
+    for (int x = 0; x < courses.Count; x++)
+    {
+        if (courses[x].studentId.Contains(sId))
+        {
+            Console.WriteLine(courses[x].name);
+            Console.WriteLine(courses[x].description);
+        }
+    }
+    return true;
+}
 
 // Классы
 class Course
 {
     public int id { get; private set; }
-    private string name;
-    private string description;
+    public string name { get; private set; }
+    public string description { get; private set; }
     private int teacherId;
-    private List<int> studentId;
+    public List<int> studentId { get; private set; }
 
     public Course(int id, string name, string description, int teacherId, List<int> studentId)
     {
@@ -245,19 +301,9 @@ class Course
         this.studentId = studentId;
     }
 
-    public bool Register(int sId, List<Student> students)
+    public void Register(int sId)
     {
-        try
-        {
-            students.Find(s => s.id == sId);
-            this.studentId.Add(sId);
-            return true;
-        }
-        catch
-        {
-            Console.WriteLine("Нет студента с таким ID");
-            return false;
-        }
+        studentId.Add(sId);
     }
 
     public void PrintInfo()
