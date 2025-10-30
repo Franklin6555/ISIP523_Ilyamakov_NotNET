@@ -1,4 +1,24 @@
-﻿class Hero
+﻿var weapons = new Dictionary<string, int>()
+{
+    {"Палка", 50 },
+    {"Дубина", 75 },
+    {"Железный меч", 100 },
+    {"ПМ", 125 },
+    {"Убийца драконов", 200 }
+};
+
+var armors = new Dictionary<string, int>()
+{
+    {"Лохмотья", 20 },
+    {"Одежда крестьянина", 25 },
+    {"Бронижилет", 40 },
+    {"Броня паладина", 60 },
+    {"Доспехи берсерка", 85 }
+};
+
+
+
+class Hero
 {
     private double hp = 250;
     public Dictionary<string, int> weapon; 
