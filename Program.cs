@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using static System.Reflection.Metadata.BlobBuilder;
 
 List <Student> students = new List<Student>();
@@ -23,11 +24,11 @@ while (inMenu)
     Console.WriteLine("4. Вывести информацию о всех преподавателях");
     Console.WriteLine("-------------------------------------------");
     Console.WriteLine("5. Добавить курс");
-    Console.WriteLine("7. Вывести информацию о всех курсах");
+    Console.WriteLine("6. Вывести информацию о всех курсах");
     Console.WriteLine("-------------------------------------------");
-    Console.WriteLine("8. Записать студента на курс");
-    Console.WriteLine("9. Удалить студента с курса");
-    Console.WriteLine("10. Поменять преподователя на курсе");
+    Console.WriteLine("7. Записать студента на курс");
+    Console.WriteLine("8. Удалить студента с курса");
+    Console.WriteLine("9. Поменять преподователя на курсе");
     Console.WriteLine("-------------------------------------------");
     Console.WriteLine("0. Выход");
     Console.WriteLine("-------------------------------------------");
@@ -37,7 +38,7 @@ while (inMenu)
     switch(choice)
     {
         case 1:
-            bool tas = TryAddSudent(ref students, ref studentGId);
+            bool tas = AddSudent(ref students, ref studentGId);
             if (tas) Console.WriteLine("Успешно");
             else Console.WriteLine("Попробуйте снова");
             break;
@@ -48,7 +49,7 @@ while (inMenu)
             }
             break;
         case 3:
-            bool tat = TryAddTeacher(ref teachers, ref teacherGId);
+            bool tat = AddTeacher(ref teachers, ref teacherGId);
             if (tat) Console.WriteLine("Успешно");
             else Console.WriteLine("Попробуйте снова");
             break;
@@ -59,7 +60,7 @@ while (inMenu)
             }
             break;
         case 5:
-            bool tac = TryAddCourse(ref courses, ref courseGId, teachers, students);
+            bool tac = AddCourse(ref courses, ref courseGId, teachers, students);
             if (tac) Console.WriteLine("Успешно");
             else Console.WriteLine("Попробуйте снова");
             break;
@@ -75,13 +76,11 @@ while (inMenu)
             break;
         case 9:
             break;
-        case 10:
-            break;
     }
 
 }
 
-static bool TryAddSudent(ref List<Student> students, ref int gId)
+static bool AddSudent(ref List<Student> students, ref int gId)
 {
     Console.WriteLine("Введите ФИО:");
     string fio = Console.ReadLine();
@@ -124,7 +123,7 @@ static bool TryAddSudent(ref List<Student> students, ref int gId)
     return true;
 }
 
-static bool TryAddTeacher(ref List<Teacher> teachers, ref int gId)
+static bool AddTeacher(ref List<Teacher> teachers, ref int gId)
 {
     Console.WriteLine("Введите ФИО:");
     string fio = Console.ReadLine();
@@ -167,7 +166,7 @@ static bool TryAddTeacher(ref List<Teacher> teachers, ref int gId)
     return true;
 }
 
-static bool TryAddCourse(ref List<Course> course, ref int gId, List<Teacher> teachers, List<Student> students)
+static bool AddCourse(ref List<Course> course, ref int gId, List<Teacher> teachers, List<Student> students)
 {
     Console.WriteLine("Введите название курса:");
     string n = Console.ReadLine();
@@ -204,7 +203,7 @@ static bool TryAddCourse(ref List<Course> course, ref int gId, List<Teacher> tea
     }
 
     Console.WriteLine("Введите ID студентов курса через Enter. Когда закончите введите 0:");
-    List<int> studentsOnCourse = new List<int>;
+    List<int> studentsOnCourse = new List<int>();
     bool enterStudents = true;
     while (enterStudents)
     {
@@ -235,7 +234,7 @@ class Course
     private string name;
     private string description;
     private int teacherId;
-    public List<int> studentId;
+    private List<int> studentId;
 
     public Course(int id, string name, string description, int teacherId, List<int> studentId)
     {
@@ -244,6 +243,21 @@ class Course
         this.description = description;
         this.teacherId = teacherId;
         this.studentId = studentId;
+    }
+
+    public bool Register(int sId, List<Student> students)
+    {
+        try
+        {
+            students.Find(s => s.id == sId);
+            this.studentId.Add(sId);
+            return true;
+        }
+        catch
+        {
+            Console.WriteLine("Нет студента с таким ID");
+            return false;
+        }
     }
 
     public void PrintInfo()
