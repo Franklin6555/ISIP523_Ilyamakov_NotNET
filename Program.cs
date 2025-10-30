@@ -33,12 +33,14 @@
 
 class Monster
 {
+    public string name;
     public double hp = 100;
     public int damage = 50;
     public int defence = 30;
 
     public Monster(string name, int hp, int damage, int defence)
     {
+        this.name = name;
         this.hp = hp;
         this.damage = damage;
         this.defence = defence;
@@ -46,9 +48,40 @@ class Monster
 
     public void PrintInfo()
     {
-        Console.WriteLine($"Характеристики этого мостра: ");
+        Console.WriteLine($"Характеристики {name}: ");
         Console.WriteLine($"Здоровье: {hp}");
         Console.WriteLine($"Урон: {damage}");
         Console.WriteLine($"Броня: {defence}");
+    }
+}
+
+class Goblin : Monster
+{
+    public int chanceKrit = 40;
+
+    public Goblin(string name, int hp, int damage, int defence, int chanceKrit)
+        : base(name, hp, damage, defence)
+    {
+        this.chanceKrit = chanceKrit;
+    }
+}
+
+class Skeleton : Monster
+{
+    public Skeleton(string name, int hp, int damage, int defence)
+        : base(name, hp, damage, defence)
+    {
+
+    }
+}
+
+class Mage : Monster
+{
+    public int freez = 40;
+
+    public Mage(string name, int hp, int damage, int defence, int freez)
+        : base(name, hp, damage, defence)
+    {
+        this.freez = freez;
     }
 }
