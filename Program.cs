@@ -16,7 +16,52 @@ var armors = new Dictionary<string, int>()
     {"Доспехи берсерка", 85 }
 };
 
+class CreateEnemy
+{
+    public static Monster RandMonster()
+    {
+        Random random = new Random();
+        switch (random.Next(0, 3))
+        {
+            case 0:
+                return new Goblin("Гоблин", 100, 50, 30, 40);
+                break;
+            case 1:
+                return new Skeleton("Скелет", 100, 50, 30);
+                break;
+            case 2:
+                return new Mage("Маг", 100, 50, 30, 40);
+                break;
 
+            default: return new Goblin("Гоблин", 100, 50, 30, 40);
+        }
+
+    }
+
+    public static Monster RandBoss()
+    {
+        Random random = new Random();
+        switch (random.Next(0, 4))
+        {
+            case 0:
+                return new Goblin("ВВГ", 200, 75, 36, 50);
+                break;
+            case 1:
+                return new Skeleton("Ковальский", 250, 65, 42);
+                break;
+            case 2:
+                return new Mage("Архимаг C++", 180, 80, 33, 50);
+                break;
+            case 3:
+                return new Mage("Пестов С--", 150, 90, 3, 55);
+                break;
+
+            default: return new Goblin("ВВГ", 200, 75, 36, 50);
+        }
+
+    }
+
+}
 
 class Hero
 {
