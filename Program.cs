@@ -7,9 +7,9 @@ List <Student> students = new List<Student>();
 List <Teacher> teachers = new List<Teacher>();
 List <Course> courses = new List<Course>();
 
-int studentGId = 0;
-int teacherGId = 0;
-int courseGId = 0;
+int studentGId = 1;
+int teacherGId = 1;
+int courseGId = 1;
 
 bool inMenu = true;
 
@@ -126,7 +126,16 @@ static bool AddSudent(ref List<Student> students, ref int gId)
         Console.WriteLine("Курс обучения не может быть пустым");
         return false;
     }
-    int ys = Convert.ToInt32(strys);
+    int ys;
+    try
+    {
+        ys = Convert.ToInt32(strys);
+    }
+    catch
+    {
+        Console.WriteLine("Неверный формат");
+        return false;
+    }
     Console.WriteLine("Введите группу здоровья: ");
     string hg = Console.ReadLine();
     if (hg == null)
@@ -234,6 +243,7 @@ static bool AddCourse(ref List<Course> course, ref int gId, List<Teacher> teache
         }
         if (sId == 0)
         {
+            studentsOnCourse.Remove(0);
             course.Add(new Course(gId, n, d, tId, studentsOnCourse));
             enterStudents = false;
         }
