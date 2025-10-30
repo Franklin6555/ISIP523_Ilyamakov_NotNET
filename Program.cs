@@ -87,9 +87,9 @@ while (inMenu)
             else Console.WriteLine("Попробуйте снова");
             break;
         case 8:
-            Console.WriteLine("Введите ID студента:");
-            
-            
+            bool tcsc = ChekSutentCourses(students, courses);
+            if (tcsc) Console.WriteLine("Успешно");
+            else Console.WriteLine("Попробуйте снова");
             break;
     }
 
@@ -259,7 +259,7 @@ static bool RegisterStudent(ref Course course, List<Student> students)
     return true;
 }
 
-static bool ChekSutentCourses(Course course, List<Student> students, List<Course> courses)
+static bool ChekSutentCourses(List<Student> students, List<Course> courses)
 {
     Console.WriteLine("Введите ID студента");
     int sId = Convert.ToInt32(Console.ReadLine());
