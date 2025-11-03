@@ -1,4 +1,8 @@
-﻿var weapons = new Dictionary<string, int>()
+﻿using System.Diagnostics.Metrics;
+using System.Linq;
+using System.Numerics;
+
+Dictionary<string, int> allWeapons = new Dictionary<string, int>()
 {
     {"Палка", 50 },
     {"Дубина", 75 },
@@ -7,7 +11,7 @@
     {"Убийца драконов", 200 }
 };
 
-var armors = new Dictionary<string, int>()
+Dictionary<string, int> allArmors = new Dictionary<string, int>()
 {
     {"Лохмотья", 20 },
     {"Одежда крестьянина", 25 },
@@ -16,63 +20,90 @@ var armors = new Dictionary<string, int>()
     {"Доспехи берсерка", 85 }
 };
 
-class CreateEnemy
+class Game
 {
-    public static Monster RandMonster()
+    public Hero player = new Hero("Палка", "Лохмотья");
+    public Random random = new Random();
+    public Dictionary<string, int> weapons { get; private set; }
+    public Dictionary<string, int> armors { get; private set; }
+    public int move { get; private set; }
+
+    public Game(Dictionary<string, int> weapons, Dictionary<string, int> armors)
     {
-        Random random = new Random();
-        switch (random.Next(0, 3))
-        {
-            case 0:
-                return new Goblin("Гоблин", 100, 50, 30, 40);
-                break;
-            case 1:
-                return new Skeleton("Скелет", 100, 50, 30);
-                break;
-            case 2:
-                return new Mage("Маг", 100, 50, 30, 40);
-                break;
-
-            default: return new Goblin("Гоблин", 100, 50, 30, 40);
-        }
-
+        this.weapons = weapons;
+        this.armors = armors;
     }
 
-    public static Monster RandBoss()
+    public void Start_game()
     {
-        Random random = new Random();
-        switch (random.Next(0, 4))
+        Console.WriteLine("Здравствуй игрок, вот твой герой:");
+        player.PrintInfo(weapons, armors);
+        move = 0;
+
+        while (player.hp > 0)
         {
-            case 0:
-                return new Goblin("ВВГ", 200, 75, 36, 50);
-                break;
-            case 1:
-                return new Skeleton("Ковальский", 250, 65, 42);
-                break;
-            case 2:
-                return new Mage("Архимаг C++", 180, 80, 33, 50);
-                break;
-            case 3:
-                return new Mage("Пестов С--", 150, 90, 3, 55);
-                break;
+            move++;
+            int currentMove = random.Next(1, 3);
 
-            default: return new Goblin("ВВГ", 200, 75, 36, 50);
+            switch (currentMove)
+            {
+                case 1:
+                    Console.WriteLine("Вы нашли сундук!");
+                    int loot = random.Next(1, 4);
+                    switch (loot)
+                    {
+                        case 1:
+                            Console.WriteLine("Вы нашли зелье лечения!");
+                            player.Heal();
+                            break;
+                        case 2:
+                            string randomWeapon = weapons.Keys.ElementAt(random.Next(weapons.Count));
+                            Console.WriteLine($"Вы нашли: {randomWeapon}\n(урон: {weapons[randomWeapon]})");
+                            Console.WriteLine("Хотите поменять с вашим? (1 - Да; 2 - Нет)");
+                            Console.WriteLine($"У вас: {player.currentWeapon}\n(урон: {weapons[player.currentWeapon]})");
+                            int choiceW = Convert.ToInt32(Console.ReadLine());
+                            switch (choiceW)
+                            {
+                                case 1:
+                                    player.currentWeapon = randomWeapon;
+                                    break;
+                                case 2:
+                                    break;
+                            }
+                            break;
+                        case 3:
+                            string randomArmor = armors.Keys.ElementAt(random.Next(armors.Count));
+                            Console.WriteLine($"Вы нашли: {randomArmor}\n(защита: {armors[randomArmor]})");
+                            Console.WriteLine("Хотите поменять с вашим? (1 - Да; 2 - Нет)");
+                            Console.WriteLine($"У вас: {player.currentArmor}\n(урон: {armors[player.currentArmor]})");
+                            int choiceA = Convert.ToInt32(Console.ReadLine());
+                            switch (choiceA)
+                            {
+                                case 1:
+                                    player.currentArmor = randomArmor;
+                                    break;
+                                case 2:
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+            }
         }
-
     }
-
 }
 
 class Hero
 {
-    private double hp = 250;
-    public Dictionary<string, int> weapon; 
-    public Dictionary<string, int> armor; 
+    public double hp { get; private set; }
+    public string currentWeapon; 
+    public string currentArmor; 
 
-    public Hero(Dictionary<string, int> weapon, Dictionary<string, int> armor)
+    public Hero(string weapon, string armor)
     {
-        this.weapon = new Dictionary<string, int>(weapon);
-        this.armor = new Dictionary<string, int>(armor);
+        hp = 250;
+        currentWeapon = weapon;
+        currentArmor = armor;
     }
 
     public void Heal()
@@ -87,12 +118,12 @@ class Hero
         Console.WriteLine($"Вы получили {damage} урона\nТеперь у вас {hp} HP");
     }
 
-    public void PrintInfo()
+    public void PrintInfo(Dictionary<string, int> armors, Dictionary<string, int> weapons)
     {
         Console.WriteLine("Характеристики вашего персонажа:");
         Console.WriteLine($"Здоровье: {hp}");
-        Console.WriteLine($"Оружие: {weapon.Keys} (урон: {weapon.Values})");
-        Console.WriteLine($"Броня: {armor.Keys} (защита: {armor.Values})");
+        Console.WriteLine($"Оружие: {currentWeapon} (урон: {weapons[currentWeapon]})");
+        Console.WriteLine($"Броня: {currentArmor} (защита: {armors[currentArmor]})");
     }
 }
 
@@ -149,4 +180,44 @@ class Mage : Monster
     {
         this.freez = freez;
     }
+}
+
+class CreateEnemy
+{
+    public static Monster RandMonster()
+    {
+        Random random = new Random();
+        switch (random.Next(0, 3))
+        {
+            case 0:
+                return new Goblin("Гоблин", 100, 50, 30, 40);
+            case 1:
+                return new Skeleton("Скелет", 100, 50, 30);
+            case 2:
+                return new Mage("Маг", 100, 50, 30, 40);
+
+            default: return new Goblin("Гоблин", 100, 50, 30, 40);
+        }
+
+    }
+
+    public static Monster RandBoss()
+    {
+        Random random = new Random();
+        switch (random.Next(0, 4))
+        {
+            case 0:
+                return new Goblin("ВВГ", 200, 75, 36, 50);
+            case 1:
+                return new Skeleton("Ковальский", 250, 65, 42);
+            case 2:
+                return new Mage("Архимаг C++", 180, 80, 33, 50);
+            case 3:
+                return new Mage("Пестов С--", 150, 90, 3, 55);
+
+            default: return new Goblin("ВВГ", 200, 75, 36, 50);
+        }
+
+    }
+
 }
