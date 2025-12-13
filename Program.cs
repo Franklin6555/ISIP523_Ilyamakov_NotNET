@@ -267,7 +267,7 @@ class Skeleton : Monster
 class Mage : Monster
 {
     public Mage(string name, int hp, int damage, double defence, int freez)
-        : base(name, hp, damage, defence, freez) { };
+        : base(name, hp, damage, defence, freez) { }
     public override void GetDamage(double damage)
     {
         base.GetDamage(damage);
